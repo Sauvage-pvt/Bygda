@@ -393,8 +393,8 @@
           <article class="card">
             <span class="pill">Underlag</span>
             <h3>Spørsmål om løsningen</h3>
-            <p class="muted">Hvordan Vipps virker, hvorfor ikke Excel, og hva som skjer hvis naboen ikke betaler.</p>
-            <button class="ghost grow" onclick="state.faq='vipps'; go('losning')">Åpne spørsmål og svar</button>
+            <p class="muted">Hvordan Vipps virker, hvem som får kassa, og hvordan lagleder stenger utenom salgstid.</p>
+            <button class="ghost grow" onclick="state.faq='tilgang'; go('losning')">Åpne spørsmål og svar</button>
           </article>
         </div>
       </div>
@@ -720,7 +720,7 @@
           <label class="muted">Kjøpers mobil</label>
           <input id="payphone" inputmode="tel" placeholder="987 65 432" value="${state.phone}" />
           <button class="clay grow" onclick="state.mode==='lodd' ? betalLoddFraKasse() : sendPay(${t})">Send krav</button>
-          <p class="muted" style="margin-top:10px">Naboen får varsel i Vipps. Gutten står ikke med ark og teller femtilapper. Varer hentes ${state.hente.dag}.</p>
+          <p class="muted" style="margin-top:10px">I ferdig app er dette vinduet stengt utenom salgstid. Lagleder åpner det. Demoen står åpen så du kan trykke.</p>
           <button class="ghost grow" style="margin-top:8px" onclick="state.faq='vipps'; go('losning')">Hvordan virker Vipps?</button>
         </article>
       </div>
@@ -844,12 +844,22 @@
     document.getElementById("screen").innerHTML = `
       <p class="kicker">Underlag</p>
       <h2>Slik virker løsningen</h2>
-      <p class="muted" style="margin-bottom:12px">Til styret, foreldre og den som skal vise appen. Ikke en bruksanvisning for gutten i døra — han trenger bare kassa.</p>
+      <p class="muted" style="margin-bottom:12px">Til styret, foreldre og den som skal vise appen. Gutten i døra trenger bare kassa — og bare mens lagleder har åpnet salgsvinduet.</p>
       <div class="split">
         <article class="card">
           ${open("hva", "Hva er Lagkassa?", `
-            <p class="muted">Én app for dugnaden til Gutter 13. Fire løp, ett Vipps-nummer. Ingen Excel, ingen konvolutt, ingen esker i gangen hjemme.</p>
-            <p class="muted">Pizzalodd, måldugnad, egg/potet/kornband og arbeidsoppdrag lander i samme kasse.</p>`)}
+            <p class="muted">Dugnadsapp for én årsklasse. Gutter 13 har sitt Vipps-nummer og sitt rom. Jenter 11 får sitt eget om de tar den i bruk. Ingen felles kasse på tvers.</p>
+            <p class="muted">Pizzalodd, måldugnad, egg/potet/kornband og arbeidsoppdrag lander i lagets kasse. Ingen Excel, ingen konvolutt, ingen esker i gangen hjemme.</p>`)}
+          ${open("tilgang", "Hvordan deles salgsvinduet uten å gi bort kassa?", `
+            <p class="muted">Lagleder eller kasserer inviterer folk på laget. Hver får tilgang til å selge — ikke til å styre Vipps, se hele historikken eller stenge dugnaden.</p>
+            <p class="muted">Ikke ett passord i lagchatten. Invitasjon per person, eller QR på trening som hver åpner på sin telefon. Lagleder kan trekke én eller alle når som helst.</p>
+            <p class="muted">Pad i døra: velg selgerprofil før hvert salg, så loddene lander på riktig gutt.</p>`)}
+          ${open("tid", "Kan lagleder stenge utenom salgstid?", `
+            <p class="muted">Ja. Standard er av. Lagleder åpner salgsvinduet når dugnaden pågår, og stenger etterpå — eller setter klokkeslett («lørdag 10–14»).</p>
+            <p class="muted">Utenfor tida kan selgerne se sine egne lodd. De kan ikke sende nytt Vipps-krav. En pad glemt i bilen etter stengetid er død som kasse.</p>`)}
+          ${open("flere", "Hva hvis flere årsklasser i Egge vil bruke den?", `
+            <p class="muted">Hver årsklasse er et eget rom med eget Vipps-nummer og egne invitasjoner. Gutter 13 ser ikke Jenter 11. Samme forelder kan være med på to lag — da får hen to invitasjoner.</p>
+            <p class="muted">Org.nr til Egge IL identifiserer klubben. Det er ikke innlogging. Nummeret er offentlig. Personen logger inn. Laget eier Vipps.</p>`)}
           ${open("vipps", "Hvordan virker Vipps?", `
             <p class="muted">Selgeren taster naboens mobil og sender et krav. Naboen får varsel i Vipps-appen og godkjenner beløpet. Først da er salget ekte.</p>
             <ol class="steps">
@@ -884,7 +894,7 @@
             <p class="muted">Regnearket vet ikke om 50-lappen kom inn. Det vet ikke hvem som solgte lodd 47. Trekning skjer i en bøtte. Purring ligger i tre chatter.</p>
             <p class="muted">Her er Vipps svaret på «er det betalt?». Loddet, varen og kasserer-tavla leser samme status.</p>`)}
           ${open("penger", "Hvem sitter med pengene?", `
-            <p class="muted">Laget. Ett Vipps-nummer. Kasserer ser mål, varer, lodd og jobb hver for seg, men summen er den samme kassa.</p>`)}
+            <p class="muted">Årsklassen. Gutter 13 har sitt Vipps-nummer. Pengene går dit, merket med dugnad og selger. Kasserer ser mål, varer, lodd og jobb hver for seg.</p>`)}
           ${open("liste", "Kan dugnadene listes opp utad?", `
             <p class="muted">Ja, men bare hvis laget først blir lagt inn et annet sted — og bare det styret huker av. Pizzalodd, høstvarer og måldugnad kan da vises som «pågår», uten kassa, uten hvem som skylder.</p>
             <p class="muted">Egge G13 er ikke lagt inn ennå. Derfor ser ikke laget den andre appen her, og ingenting fra denne demoen ligger synlig utad. Skissen ligger under Dugnad → Opplisting.</p>`)}
