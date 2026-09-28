@@ -539,7 +539,7 @@
     document.getElementById("screen").innerHTML = `
       <p class="kicker">Organisasjonssøk</p>
       <h2>Finn laget</h2>
-      <input id="qfelt" value="${state.q.replace(/"/g, """)}" placeholder="Navn, verv, kor, 4H…" oninput="state.q=this.value" onkeyup="if(event.key==='Enter')sok()" />
+      <input id="qfelt" value="${(state.q || '').replace(/</g, '')}" placeholder="Navn, verv, kor, 4H…" oninput="state.q=this.value" onkeyup="if(event.key==='Enter')sok()" />
       <div class="row" style="margin-top:0"><button class="primary grow" onclick="sok()">Søk</button></div>
       ${radiusFelt("sok")}
       <div class="pills">
@@ -681,7 +681,7 @@
       <p class="muted">Lim inn arket. Ett lag per linje: navn;type;km;epost;mobil</p>
       <article class="card">
         <label class="muted">Listenavn</label>
-        <input value="${state.listeNavn.replace(/"/g, """)}" oninput="state.listeNavn=this.value" />
+        <input value="${state.listeNavn}" oninput="state.listeNavn=this.value" />
         <textarea rows="7" oninput="state.manuell=this.value">${state.manuell}</textarea>
         <div class="row">
           <button class="primary grow" onclick="toast(parseListe().length + ' lag lest inn'); liste()">Les inn</button>
