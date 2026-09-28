@@ -155,7 +155,7 @@
           <p>Finn laget · Egge og omegn</p>
         </div>
       </div>
-      <div class="wide-note">Søsterapp til Lagkassa. Her finner folk laget. Der driver laget dugnad.</div>
+      <div class="wide-note">Finn lag i nærheten. Avstand og invitasjon. Samme fil på telefon og pad.</div>
       <button class="help-btn" onclick="go('hjelp')">?</button>
     </header>
     <div class="toast" id="toast"></div>
@@ -188,8 +188,8 @@ Bygdekvinnelaget Egge;lokalsamfunn;8;bkl.egge@example.no;`,
   };
 
   const org = [
-    { id: 1, navn: "Egge IL", type: "idrett", km: 1.2, medlem: 420, aapen: true, trenger: "Trenere G13", kort: "Fotball, ski og allidrett. Gutter 13 bruker Lagkassa til dugnad.", epost: "post@eggeil.no", tlf: "74123456", alder: "6–19" },
-    { id: 2, navn: "Egge IL Gutter 13", type: "idrett", km: 1.2, medlem: 18, aapen: true, trenger: "Flere foreldre på dugnad", kort: "Laget som allerede har Lagkassa-demoen.", epost: "g13@eggeil.no", tlf: "97712334", alder: "12–13" },
+    { id: 1, navn: "Egge IL", type: "idrett", km: 1.2, medlem: 420, aapen: true, trenger: "Trenere G13", kort: "Fotball, ski og allidrett for barn og ungdom.", epost: "post@eggeil.no", tlf: "74123456", alder: "6–19" },
+    { id: 2, navn: "Egge IL Gutter 13", type: "idrett", km: 1.2, medlem: 18, aapen: true, trenger: "Flere foreldre på dugnad", kort: "Ett av lagene i klubben. Ikke koblet utad ennå.", epost: "g13@eggeil.no", tlf: "97712334", alder: "12–13" },
     { id: 3, navn: "4H Egge", type: "barn", km: 3.4, medlem: 34, aapen: true, trenger: "Klubbleder", kort: "Dyr, grøde og møte hver annen onsdag.", epost: "4h.egge@example.no", tlf: "90011223", alder: "8–16" },
     { id: 4, navn: "Egge historielag", type: "kultur", km: 2.1, medlem: 67, aapen: true, trenger: "Arkivhjelp", kort: "Gårdsarkiv, turer og årbok.", epost: "historie@example.no", tlf: "", alder: "Voksen" },
     { id: 5, navn: "Bygdekvinnelaget Egge", type: "lokalsamfunn", km: 2.8, medlem: 41, aapen: true, trenger: "Kasserer", kort: "Matkultur, husflid og møte i bygdehuset.", epost: "bkl.egge@example.no", tlf: "91555666", alder: "Voksen" },
@@ -277,10 +277,9 @@ Bygdekvinnelaget Egge;lokalsamfunn;8;bkl.egge@example.no;`,
               </div>`).join("")}
           </article>
           <article class="card">
-            <span class="pill">To apper</span>
-            <h3>Bygda og Lagkassa</h3>
-            <p class="muted">Bygda finner medlemmer. Lagkassa tar dugnaden når de er inne. Ikke samme app.</p>
-            <a class="btn primary grow" href="lagkassa.html" style="display:block;text-align:center;text-decoration:none;padding:11px 12px;border-radius:12px;background:#1b3a4b;color:#fff8eb;font-weight:700">Åpne Lagkassa-demo</a>
+            <span class="pill">To spor</span>
+            <h3>Finn laget, eller driv det</h3>
+            <p class="muted">Bygda er oppdagelse. Når et lag først er i gang, har de sin egen kasse til dugnad. Den vises ikke her ennå.</p>
           </article>
         </div>
       </div>
@@ -370,7 +369,6 @@ Bygdekvinnelaget Egge;lokalsamfunn;8;bkl.egge@example.no;`,
           <div class="list-row"><span>E-post</span><b>${o.epost || "—"}</b></div>
           <div class="list-row"><span>Telefon</span><b>${o.tlf || "Ikke oppgitt"}</b></div>
           <p class="muted" style="margin-top:10px">Bygda lagrer ikke at du «liker» laget. Du sender en forespørsel. Laget svarer.</p>
-          ${o.id === 2 ? `<a href="lagkassa.html" style="display:block;margin-top:12px;text-align:center;padding:11px;border-radius:12px;background:#c45c2d;color:#fff;font-weight:700;text-decoration:none">Dette laget bruker Lagkassa</a>` : ""}
         </article>
       </div>
       <button class="ghost grow" style="margin-top:12px" onclick="go('sok')">Tilbake til søk</button>
@@ -488,7 +486,7 @@ Bygdekvinnelaget Egge;lokalsamfunn;8;bkl.egge@example.no;`,
       </div>`;
     document.getElementById("screen").innerHTML = `
       <p class="kicker">Underlag</p>
-      <h2>Bygda, ikke Lagkassa</h2>
+      <h2>Slik er utkastet</h2>
       <p class="muted" style="margin-bottom:12px">Denne appen er oppdagelse og verving. Den andre er dugnad når laget allerede finnes.</p>
       <div class="split">
         <article class="card">
@@ -503,9 +501,9 @@ Bygdekvinnelaget Egge;lokalsamfunn;8;bkl.egge@example.no;`,
         </article>
         <article class="card">
           ${open("flere", "Andre ideer i utkastet", `
-            <p class="muted">Åpne verv på forsida. «Jeg vil være med» som forespørsel, ikke offentlig medlemsliste. Kobling til Lagkassa for lag som allerede driver dugnad. Filter på alder. Stengte lag (jaktkort) vises, men uten å late som alle kan melde seg inn i dag.</p>`)}
+            <p class="muted">Åpne verv på forsida. «Jeg vil være med» som forespørsel, ikke offentlig medlemsliste. Filter på alder. Stengte lag vises uten å late som alle kan melde seg inn i dag. Dugnadslister kommer bare hvis et lag senere huker av for det.</p>`)}
           ${open("ikke", "Hva Bygda ikke er", `
-            <p class="muted">Ikke Facebook. Ikke nasjonalt medlemsregister. Ikke betaling. Pengene og pizzaloddene bor i Lagkassa.</p>`)}
+            <p class="muted">Ikke Facebook. Ikke nasjonalt medlemsregister. Ikke betaling og ikke kassa for et enkelt lag.</p>`)}
         </article>
       </div>
     `;
