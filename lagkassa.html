@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Lagkassa – Egge IL Gutter 13</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --pitch: #143528;
+      --pitch-2: #0c241b;
+      --leaf: #3d8b57;
+      --gold: #e2b04a;
+      --clay: #c45c2d;
+      --cream: #f3ead7;
+      --paper: #fff8eb;
+      --ink: #1a1612;
+      --mute: #6d6458;
+      --line: #e4d7bf;
+      --ok: #1f7a45;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; }
+    body {
+      font-family: "Source Sans 3", system-ui, sans-serif;
+      background:
+        radial-gradient(900px 420px at 20% -10%, #2a5a3c 0%, transparent 55%),
+        #0b0f0c;
+      color: var(--ink);
+      display: flex;
+      justify-content: center;
+      padding: 12px;
+    }
+    .device {
+      width: min(1120px, 100%);
+      min-height: min(860px, calc(100vh - 24px));
+      background: var(--cream);
+      border-radius: 28px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 40px 80px rgba(0,0,0,.45);
+      border: 10px solid #1c1814;
+      position: relative;
+    }
+    .status {
+      height: 26px;
+      background: var(--pitch);
+      color: #d7c9a8;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+      letter-spacing: .08em;
+    }
+    header.app {
+      background: linear-gradient(180deg, var(--pitch), var(--pitch-2));
+      color: var(--cream);
+      padding: 10px 18px 14px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+    .club { display: flex; align-items: center; gap: 12px; }
+    .badge-crest {
+      width: 46px; height: 46px; border-radius: 14px;
+      background: linear-gradient(145deg, var(--gold), #b8862b);
+      color: var(--pitch-2);
+      display: grid; place-items: center;
+      font-family: Fraunces, serif; font-weight: 700; font-size: 18px;
+    }
+    header h1 { font-family: Fraunces, serif; font-size: 22px; line-height: 1.1; }
+    header p { font-size: 13px; opacity: .75; }
+    .wide-note { font-size: 12px; opacity: .7; text-align: right; max-width: 280px; }
+    .screen { flex: 1; overflow: auto; padding: 16px 16px 100px; }
+    .split { display: grid; gap: 12px; }
+    .hero, .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+    }
+    .kicker { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--leaf); font-weight: 700; }
+    h2 { font-family: Fraunces, serif; font-size: 28px; margin: 4px 0 8px; }
+    h3 { font-family: Fraunces, serif; font-size: 18px; margin-bottom: 6px; }
+    .money { font-family: Fraunces, serif; font-size: 34px; color: var(--pitch); }
+    .muted { color: var(--mute); font-size: 14px; line-height: 1.45; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+    .stat { background: #efe4cc; border-radius: 14px; padding: 10px; }
+    .stat b { display: block; font-size: 18px; }
+    .stat span { font-size: 11px; color: var(--mute); }
+    .row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    button, .btn {
+      font: inherit; font-weight: 700; border: 0; cursor: pointer;
+      border-radius: 12px; padding: 11px 12px;
+    }
+    .primary { background: var(--pitch); color: var(--cream); }
+    .clay { background: var(--clay); color: #fff; }
+    .gold { background: var(--gold); color: var(--pitch-2); }
+    .ghost { background: transparent; border: 1px solid var(--line); color: var(--mute); }
+    .grow { flex: 1; min-width: 140px; }
+    .nav {
+      position: absolute; left: 12px; right: 12px; bottom: 12px;
+      background: #fff8eb; border: 1px solid var(--line); border-radius: 22px;
+      display: grid; grid-template-columns: repeat(4, 1fr); padding: 6px;
+    }
+    .nav button {
+      background: transparent; color: var(--mute); font-size: 12px;
+      padding: 8px 4px; display: flex; flex-direction: column; gap: 2px; align-items: center;
+    }
+    .nav button.on { color: var(--pitch); background: #efe4cc; }
+    .list-row, .ticket {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14px; gap: 8px;
+    }
+    .pill { display: inline-block; background: #efe4cc; border-radius: 999px; padding: 3px 8px; font-size: 11px; font-weight: 700; margin-bottom: 6px; }
+    .ok { color: var(--ok); font-weight: 700; }
+    .wait { color: #9a6b12; font-weight: 700; }
+    .qty { display: flex; align-items: center; gap: 8px; }
+    .qty button { width: 36px; height: 36px; background: #efe4cc; border-radius: 10px; font-size: 18px; }
+    .total { font-family: Fraunces, serif; font-size: 30px; margin: 10px 0; }
+    input, textarea, select {
+      width: 100%; border: 1px solid var(--line); background: #fff; border-radius: 12px;
+      padding: 12px; font: inherit; margin: 6px 0 10px;
+    }
+    .toast {
+      position: absolute; left: 16px; right: 16px; top: 40px;
+      background: var(--pitch); color: var(--cream); padding: 12px 14px;
+      border-radius: 14px; display: none; z-index: 5;
+    }
+    .progress { height: 8px; background: #efe4cc; border-radius: 99px; overflow: hidden; margin: 8px 0 4px; }
+    .progress > i { display: block; height: 100%; background: var(--leaf); }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { text-align: left; color: var(--mute); font-weight: 600; padding: 6px 4px; }
+    td { padding: 8px 4px; border-top: 1px solid var(--line); vertical-align: top; }
+    .vs { display: grid; gap: 10px; }
+    .bad { background: #f6e4d4; }
+    .good { background: #e7f0e4; }
+    .strike { color: #9a6b12; text-decoration: line-through; }
+    .stack { display: grid; gap: 12px; }
+    .slots { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 0; }
+    .slot { background: #efe4cc; border-radius: 14px; padding: 10px; }
+    .slot b { display: block; font-size: 16px; }
+    .check {
+      display: flex; gap: 10px; align-items: flex-start;
+      padding: 10px 0; border-bottom: 1px solid var(--line);
+    }
+    .mark {
+      width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+      background: #efe4cc; color: var(--pitch); font-weight: 800;
+    }
+    .check.done { opacity: .42; }
+    .check.done .mark { background: var(--leaf); color: #fff; }
+    .help-btn {
+      width: 36px; height: 36px; border-radius: 12px;
+      background: rgba(255,248,235,.12); color: var(--cream);
+      font-weight: 800; flex-shrink: 0;
+    }
+    .faq { border-top: 1px solid var(--line); padding: 12px 0; }
+    .faq:first-child { border-top: 0; padding-top: 0; }
+    .faq button.q {
+      width: 100%; text-align: left; background: transparent;
+      color: var(--ink); padding: 0; display: flex; justify-content: space-between;
+      gap: 12px; align-items: flex-start; font-size: 16px;
+    }
+    .faq .a { margin-top: 8px; }
+    .faq .a p { margin: 0 0 8px; }
+    .steps { margin: 8px 0 0; padding-left: 18px; color: var(--mute); font-size: 14px; line-height: 1.45; }
+    .steps li { margin: 4px 0; }
+    @media (min-width: 820px) {
+      .split { grid-template-columns: 1.1fr .9fr; align-items: start; }
+      .vs { grid-template-columns: 1fr 1fr; }
+      .screen { padding: 20px 22px 108px; }
+      header h1 { font-size: 26px; }
+      .wide-note { display: block; }
+      .kasse-grid { display: grid; grid-template-columns: 1.2fr .8fr; gap: 12px; }
+    }
+    @media (max-width: 819px) {
+      .device { width: min(430px, 100%); min-height: min(900px, calc(100vh - 24px)); }
+      .wide-note { display: none; }
+      header.app { align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="device">
+    <div class="status"><span>21:12</span><span>LAGKASSA · TELEFON OG PAD</span><span>5G</span></div>
+    <header class="app">
+      <div class="club">
+        <div class="badge-crest">E</div>
+        <div>
+          <h1>Egge IL · Gutter 13</h1>
+          <p>Høstdugnad 2026 · Vipps #54921</p>
+        </div>
+      </div>
+      <div class="wide-note">Samme app på telefon og iPad. På pad får kasserer to kolonner. Ingen egen nettbrettapp.</div>
+      <button class="help-btn" onclick="go('losning')" title="Slik virker løsningen">?</button>
+    </header>
+    <div class="toast" id="toast"></div>
+    <div class="screen" id="screen"></div>
+    <nav class="nav">
+      <button class="on" data-go="hjem" onclick="go('hjem')">⌂<span>Hjem</span></button>
+      <button data-go="dugnad" onclick="go('dugnad')">⚑<span>Dugnad</span></button>
+      <button data-go="kasse" onclick="go('kasse')">▣<span>Kasse</span></button>
+      <button data-go="kassa" onclick="go('kassa')">☰<span>Kasserer</span></button>
+    </nav>
+  </div>
+<script>
+  const state = {
+    goals: 18, cap: 30, sponsors: 32,
+    maalSum: 4120, vareSum: 1700, loddSum: 4500, jobbSum: 0,
+    cart: { egg: 1, korn: 2, potet: 0 },
+    phone: "",
+    mode: "varer",
+    _n: 2,
+    loddPris: 50, loddMax: 200, loddSolgt: 90,
+    selger: "Håkon",
+    tickets: [
+      { nr: "014", kjoper: "Kari, 977 12 334", selger: "Ola", betalt: true },
+      { nr: "015", kjoper: "Bestefar", selger: "Håkon", betalt: true },
+      { nr: "016", kjoper: "Haugen Rør", selger: "Emil", betalt: true },
+      { nr: "017", kjoper: "Venter på Vipps", selger: "Sander", betalt: false }
+    ],
+    vinner: null,
+    bonde: "Haugen gård",
+    filter: "åpne",
+    faq: "vipps",
+    hente: { sted: "Klubbhuset", dag: "Torsdag 2. okt", fra: "17:00", til: "19:00", last: "16:45" },
+    vinduer: ["17:00–17:30", "17:30–18:00", "18:00–18:30", "18:30–19:00"],
+    orders: [
+      { id: 1, navn: "Kari Moen", tlf: "97712334", egg: 2, korn: 1, potet: 0, betalt: true, hentet: true, selger: "Ola", vindu: "17:00–17:30" },
+      { id: 2, navn: "Bestefar", tlf: "90011223", egg: 1, korn: 2, potet: 1, betalt: true, hentet: false, selger: "Håkon", vindu: "17:30–18:00" },
+      { id: 3, navn: "Haugen Rør", tlf: "91555666", egg: 4, korn: 0, potet: 2, betalt: true, hentet: false, selger: "Emil", vindu: "17:00–17:30" },
+      { id: 4, navn: "Sander nabo", tlf: "98877665", egg: 1, korn: 1, potet: 0, betalt: false, hentet: false, selger: "Sander", vindu: "" }
+    ]
+  };
+  const price = { egg: 110, korn: 75, potet: 80 };
+
+  function paid() { return state.orders.filter(o => o.betalt); }
+  function sumOrders(key, list) {
+    return (list || paid()).reduce((a, o) => a + (o[key] || 0), 0);
+  }
+  function orderTotal(o) {
+    return o.egg * price.egg + o.korn * price.korn + o.potet * price.potet;
+  }
+  function vareLinje(o) {
+    return [o.egg ? o.egg + " egg" : "", o.korn ? o.korn + " korn" : "", o.potet ? o.potet + " potet" : ""].filter(Boolean).join(" · ");
+  }
+  function henteTekst() {
+    return state.hente.sted + ", " + state.hente.dag + " " + state.hente.fra + "–" + state.hente.til;
+  }
+  function iVindu(v) { return paid().filter(o => o.vindu === v); }
+  function nesteVindu() {
+    let best = state.vinduer[0], n = 999;
+    state.vinduer.forEach(v => {
+      const c = iVindu(v).filter(o => !o.hentet).length;
+      if (c < n) { n = c; best = v; }
+    });
+    return best;
+  }
+  function pakk(list) {
+    return { egg: sumOrders("egg", list), korn: sumOrders("korn", list), potet: sumOrders("potet", list) };
+  }
+  function fmtTlf(n) {
+    const s = String(n).replace(/\D/g, "").slice(-8);
+    return s.slice(0, 3) + " " + s.slice(3, 5) + " " + s.slice(5);
+  }
+  function go(name) {
+    document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("on", b.dataset.go === name));
+    ({ hjem, dugnad, maal, varer, pizza, oppdrag, kasse, kassa, losning }[name] || hjem)();
+  }
+  function toast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.style.display = "block";
+    setTimeout(() => t.style.display = "none", 2600);
+  }
+  function net() { return state.maalSum + state.vareSum + state.loddSum + state.jobbSum; }
+
+  function hjem() {
+    const åpne = paid().filter(o => !o.hentet).length;
+    document.getElementById("screen").innerHTML = `
+      <div class="split">
+        <section class="hero">
+          <div class="kicker">Klubbkassa så langt</div>
+          <div class="money">${net().toLocaleString("nb-NO")} kr</div>
+          <p class="muted">Fire løp, ett Vipps-nummer. Betalt før henting. Bonden får bare det som er solgt.</p>
+          <div class="stats">
+            <div class="stat"><b>${state.goals}</b><span>mål</span></div>
+            <div class="stat"><b>${sumOrders("egg")}</b><span>eggbrett</span></div>
+            <div class="stat"><b>${state.loddSolgt}</b><span>pizzalodd</span></div>
+          </div>
+        </section>
+        <div class="stack">
+          <article class="card">
+            <span class="pill">Pågår</span>
+            <h3>Pizzalodd mot Bakeriet</h3>
+            <div class="progress"><i style="width:${Math.round(state.loddSolgt / state.loddMax * 100)}%"></i></div>
+            <p class="muted">${state.loddSolgt} av ${state.loddMax} lodd à ${state.loddPris} kr · ${state.loddSum.toLocaleString("nb-NO")} kr inne</p>
+            <div class="row">
+              <button class="clay grow" onclick="go('pizza')">Åpne loddboka</button>
+              <button class="ghost grow" onclick="state.mode='lodd'; go('kasse')">Selg lodd nå</button>
+            </div>
+          </article>
+          <article class="card">
+            <span class="pill">${åpne} venter på henting</span>
+            <h3>Egg, potet og kornband</h3>
+            <p class="muted">${henteTekst()}. ${sumOrders("egg")} egg · ${sumOrders("korn")} korn · ${sumOrders("potet")} potet. Ingen esker i gangen hjemme.</p>
+            <div class="row">
+              <button class="primary grow" onclick="go('varer')">Smart henteoppsett</button>
+              <button class="ghost grow" onclick="state.mode='varer'; go('kasse')">Selg i døra</button>
+            </div>
+          </article>
+          <article class="card">
+            <p class="muted">${state.goals} mål · ${state.maalSum.toLocaleString("nb-NO")} kr lovet</p>
+            <button class="primary grow" onclick="go('maal')">Kamp-tavle</button>
+          </article>
+          <article class="card">
+            <span class="pill">Underlag</span>
+            <h3>Spørsmål om løsningen</h3>
+            <p class="muted">Hvordan Vipps virker, hvorfor ikke Excel, og hva som skjer hvis naboen ikke betaler.</p>
+            <button class="ghost grow" onclick="state.faq='vipps'; go('losning')">Åpne spørsmål og svar</button>
+          </article>
+        </div>
+      </div>
+    `;
+  }
+
+  function dugnad() {
+    document.getElementById("screen").innerHTML = `
+      <p class="kicker">Velg mal</p>
+      <h2>Hva skal laget kjøre?</h2>
+      <p class="muted" style="margin-bottom:12px">Én dugnad om gangen. Varer = forhåndsbetalt + ett hentested.</p>
+      <div class="split">
+        <article class="card">
+          <span class="pill">2 minutter å starte</span>
+          <h3>Pizzalodd</h3>
+          <p class="muted">Bakeriet stiller 3 gavekort. Laget selger digitale lodd. Appen teller, tar Vipps og trekker vinner. Ingen ark i skolesekken.</p>
+          <div class="row"><button class="clay grow" onclick="go('pizza')">Se hvor enkelt</button></div>
+        </article>
+        <article class="card">
+          <span class="pill">Sesong</span>
+          <h3>Måldugnad</h3>
+          <p class="muted">Kroner per mål, maksgrense, automatisk oppgjør.</p>
+          <div class="row"><button class="primary grow" onclick="go('maal')">Åpne</button></div>
+        </article>
+        <article class="card">
+          <span class="pill">Lokale varer</span>
+          <h3>Egg, potet, kornband</h3>
+          <p class="muted">Vipps først. Appen fordeler hentetid. Bonden får én SMS med eksakt antall.</p>
+          <div class="row"><button class="ghost grow" onclick="go('varer')">Henteoppsett</button></div>
+        </article>
+        <article class="card">
+          <span class="pill">Én lørdag</span>
+          <h3>Arbeidsoppdrag</h3>
+          <p class="muted">Gård legger ut jobb. Laget tar den.</p>
+          <div class="row"><button class="gold grow" onclick="go('oppdrag')">Tavla</button></div>
+        </article>
+      </div>
+    `;
+  }
+
+  function pizza() {
+    const igjen = state.loddMax - state.loddSolgt;
+    document.getElementById("screen").innerHTML = `
+      <p class="kicker">Pizzalodd · Bakeriet på hjørnet</p>
+      <h2>Digital loddbok</h2>
+      <div class="vs" style="margin-bottom:12px">
+        <article class="card bad">
+          <span class="pill">Slik det er i dag</span>
+          <h3>Regneark og papir</h3>
+          <p class="muted">Hvem solgte lodd 47? Ble 50-lappen lagt i konvolutten? Trekning på årsmøtet med bøtte. Purring i Messenger tre uker etterpå.</p>
+          <p class="strike">Lodd_host_FERDIG_v7.xlsx</p>
+        </article>
+        <article class="card good">
+          <span class="pill">Slik det er her</span>
+          <h3>Tre trykk</h3>
+          <p class="muted">Velg antall → tast nummer → naboen godkjenner Vipps. Loddnummer deles ut automatisk. Trekning med ett trykk.</p>
+          <p class="ok">Alt ligger på lagets Vipps #54921</p>
+        </article>
+      </div>
+      <div class="split">
+        <article class="card">
+          <h3>Salg i døra / på pad</h3>
+          <p class="muted">Premie: 3 gavekort på stor pizza. Lodd ${state.loddPris} kr. ${igjen} lodd igjen.</p>
+          <label class="muted">Antall lodd nå</label>
+          <div class="qty">
+            <button onclick="state._n=Math.max(1,(state._n||1)-1); pizza()">−</button>
+            <b>${state._n || 1}</b>
+            <button onclick="state._n=Math.min(10,(state._n||1)+1); pizza()">+</button>
+          </div>
+          <label class="muted">Kjøpers mobil</label>
+          <input id="loddphone" inputmode="tel" placeholder="977 12 334" />
+          <button class="clay grow" onclick="selgLodd()">Send Vipps-krav ${((state._n || 1) * state.loddPris)} kr</button>
+          <p class="muted" style="margin-top:8px">Selger denne økta: ${state.selger}. Loddnummer kommer opp når betalingen er inne.</p>
+        </article>
+        <div class="stack">
+          <article class="card">
+            <h3>Live, ikke ark</h3>
+            <div class="progress"><i style="width:${Math.round(state.loddSolgt / state.loddMax * 100)}%"></i></div>
+            <p class="muted">${state.loddSolgt} solgt · ${state.loddSum.toLocaleString("nb-NO")} kr</p>
+            ${state.tickets.map(t => `
+              <div class="ticket">
+                <div><b>#${t.nr}</b><div class="muted">${t.kjoper} · ${t.selger}</div></div>
+                <span class="${t.betalt ? "ok" : "wait"}">${t.betalt ? "Betalt" : "Venter"}</span>
+              </div>`).join("")}
+          </article>
+          <article class="card">
+            <h3>Trekning</h3>
+            <p class="muted">${state.vinner ? "Vinner: lodd " + state.vinner : "Når boka er stengt, trekker kasserer her. Ingen lapp i hatten."}</p>
+            <button class="gold grow" onclick="trekk()">Trekk vinner blant betalte</button>
+          </article>
+        </div>
+      </div>
+    `;
+  }
+
+  function selgLodd() {
+    const n = (document.getElementById("loddphone").value || "").replace(/\s/g, "");
+    const ant = state._n || 1;
+    if (!/^(\+47)?[49]\d{7}$/.test(n)) return toast("Tast gyldig mobilnummer");
+    if (state.loddSolgt + ant > state.loddMax) return toast("Ikke nok lodd igjen");
+    for (let i = 0; i < ant; i++) {
+      state.loddSolgt++;
+      state.loddSum += state.loddPris;
+      const nr = String(state.loddSolgt).padStart(3, "0");
+      state.tickets.unshift({ nr, kjoper: fmtTlf(n), selger: state.selger, betalt: true });
+    }
+    toast(ant + " lodd betalt. Siste nummer " + String(state.loddSolgt).padStart(3, "0") + ".");
+    pizza();
+  }
+
+  function trekk() {
+    const pool = state.tickets.filter(t => t.betalt);
+    const w = pool[Math.floor(Math.random() * pool.length)];
+    state.vinner = "#" + w.nr + " · " + w.kjoper;
+    toast("Vinner: lodd " + w.nr);
+    pizza();
+  }
+
+  function maal() {
+    document.getElementById("screen").innerHTML = `
+      <div class="split">
+        <section class="hero">
+          <div class="kicker">Måldugnad</div>
+          <h2>${state.goals} mål</h2>
+          <p class="muted">Maks ${state.cap} · ${state.maalSum.toLocaleString("nb-NO")} kr hos ${state.sponsors} støtter</p>
+          <div class="progress"><i style="width:${Math.round(state.goals / state.cap * 100)}%"></i></div>
+          <div class="row">
+            <button class="primary grow" onclick="state.goals++; state.maalSum += 230; toast('+1 mål. Ingen Excel.'); maal()">+1 mål etter kamp</button>
+            <button class="ghost grow" onclick="toast('Delingsbilde klart til Facebook')">Del resultat</button>
+          </div>
+        </section>
+        <article class="card">
+          <h3>Støttenivå</h3>
+          <div class="list-row"><span>Bronse 10 kr</span><b>11</b></div>
+          <div class="list-row"><span>Sølv 25 kr</span><b>14</b></div>
+          <div class="list-row"><span>Gull 50 kr</span><b>5</b></div>
+          <div class="list-row"><span>Bedrift 100 kr + logo</span><b>2</b></div>
+        </article>
+      </div>
+    `;
+  }
+
+  function varer() {
+    const P = pakk(paid());
+    const åpne = paid().filter(o => !o.hentet);
+    const vis = state.filter === "åpne" ? state.orders.filter(o => o.betalt && !o.hentet) : state.orders.filter(o => o.betalt);
+    document.getElementById("screen").innerHTML = `
+      <p class="kicker">Lokale varer</p>
+      <h2>Smart henteoppsett</h2>
+      <div class="vs" style="margin-bottom:12px">
+        <article class="card bad">
+          <span class="pill">Regneark</span>
+          <h3>Esker i gangen</h3>
+          <p class="muted">Hver familie tar med 8 eggbrett hjem. Halvparten blir igjen. Hvem hentet? Ligger i tre chatter og ett ark.</p>
+        </article>
+        <article class="card good">
+          <span class="pill">Her</span>
+          <h3>Ett sted, én kveld</h3>
+          <p class="muted">Vipps først. Bonden leverer det som er betalt. Appen fordeler folk i fire puljer. Kryss av når de kommer.</p>
+        </article>
+      </div>
+      <div class="split">
+        <div class="stack">
+          <article class="card">
+            <span class="pill">${state.hente.dag}</span>
+            <h3>${state.hente.sted} ${state.hente.fra}–${state.hente.til}</h3>
+            <p class="muted">Bonden leverer ${state.hente.last}. Folket henter etterpå. Ingen kø klokka fem — appen fyller det roligste vinduet først.</p>
+            <div class="slots">
+              ${state.vinduer.map(v => {
+                const list = iVindu(v);
+                const å = list.filter(o => !o.hentet).length;
+                const p = pakk(list.filter(o => !o.hentet));
+                return `<div class="slot"><b>${v}</b><span class="muted">${å} åpne · ${p.egg} egg · ${p.korn} korn · ${p.potet} potet</span></div>`;
+              }).join("")}
+            </div>
+          </article>
+          <article class="card">
+            <h3>Én SMS til ${state.bonde}</h3>
+            <p class="muted">Bare betalte ordrer. Ubetalte teller ikke. Ingen restlager.</p>
+            <div class="stats">
+              <div class="stat"><b>${P.egg}</b><span>eggbrett</span></div>
+              <div class="stat"><b>${P.korn}</b><span>kornband</span></div>
+              <div class="stat"><b>${P.potet}</b><span>potet 3 kg</span></div>
+            </div>
+            <div class="row">
+              <button class="primary grow" onclick="smsBonde()">Send bestilling</button>
+              <button class="ghost grow" onclick="smsKjopere()">Varsle kjøpere</button>
+            </div>
+          </article>
+        </div>
+        <article class="card">
+          <h3>Sjekkliste kvelden</h3>
+          <p class="muted">${åpne.length} venter · ${paid().filter(o => o.hentet).length} hentet</p>
+          <div class="row" style="margin-top:8px">
+            <button class="${state.filter === "åpne" ? "primary" : "ghost"} grow" onclick="state.filter='åpne'; varer()">Ikke hentet</button>
+            <button class="${state.filter === "alle" ? "primary" : "ghost"} grow" onclick="state.filter='alle'; varer()">Alle betalte</button>
+          </div>
+          ${vis.length ? vis.map(o => `
+            <div class="check ${o.hentet ? "done" : ""}">
+              <button class="mark" onclick="kryss(${o.id})">${o.hentet ? "✓" : ""}</button>
+              <div style="flex:1">
+                <b>${o.navn}</b>
+                <div class="muted">${o.vindu || "Ingen vindu"} · ${vareLinje(o)} · ${fmtTlf(o.tlf)}</div>
+              </div>
+              <span class="ok">${orderTotal(o)} kr</span>
+            </div>`).join("") : `<p class="muted" style="margin-top:10px">Alt hentet.</p>`}
+          <button class="ghost grow" style="margin-top:12px" onclick="state.mode='varer'; go('kasse')">Selg mer i døra</button>
+        </article>
+      </div>
+    `;
+  }
+
+  function smsBonde() {
+    const P = pakk(paid());
+    toast("SMS til " + state.bonde + ": " + P.egg + " egg, " + P.korn + " korn, " + P.potet + " potet. Lever " + state.hente.last + " " + state.hente.sted + ".");
+  }
+  function smsKjopere() {
+    const n = paid().filter(o => !o.hentet).length;
+    toast(n + " kjøpere varslet: henting " + henteTekst() + ", se ditt vindu.");
+  }
+  function kryss(id) {
+    const o = state.orders.find(x => x.id === id);
+    if (!o) return;
+    o.hentet = !o.hentet;
+    toast(o.hentet ? o.navn + " hentet." : o.navn + " satt tilbake.");
+    varer();
+  }
+
+  function oppdrag() {
+    document.getElementById("screen").innerHTML = `
+      <h2>Oppdragstavla</h2>
+      <div class="split">
+        <article class="card">
+          <span class="pill">Åpent</span>
+          <h3>Male redskapshus</h3>
+          <p class="muted">Haugen gård · lør 10–14 · 6 personer</p>
+          <div class="money" style="font-size:26px">6 000 kr</div>
+          <button class="gold grow" onclick="state.jobbSum=6000; toast('Tatt. Oppgjør til #54921'); hjem()">Vi tar denne</button>
+        </article>
+        <article class="card">
+          <span class="pill">Åpent</span>
+          <h3>Stable ved</h3>
+          <p class="muted">Sagbruket · 4 personer · 4 500 kr</p>
+        </article>
+      </div>
+    `;
+  }
+
+  function kasse() {
+    const t = state.cart.egg * price.egg + state.cart.korn * price.korn + state.cart.potet * price.potet;
+    document.getElementById("screen").innerHTML = `
+      <p class="kicker">Pad i døra · selger ${state.selger}</p>
+      <h2>Kasse</h2>
+      <div class="kasse-grid">
+        <article class="card">
+          <div class="row" style="margin-top:0">
+            <button class="${state.mode !== "lodd" ? "primary" : "ghost"} grow" onclick="state.mode='varer'; kasse()">Varer</button>
+            <button class="${state.mode === "lodd" ? "clay" : "ghost"} grow" onclick="state.mode='lodd'; kasse()">Pizzalodd</button>
+          </div>
+          ${state.mode === "lodd" ? `
+            <p class="muted" style="margin:10px 0">Ett trykk = ett lodd à ${state.loddPris} kr. Nummer tildeles etter Vipps.</p>
+            <div class="qty">
+              <button onclick="state._n=Math.max(1,(state._n||1)-1); kasse()">−</button>
+              <b>${state._n || 1} lodd</b>
+              <button onclick="state._n=Math.min(10,(state._n||1)+1); kasse()">+</button>
+            </div>
+            <div class="total">${((state._n || 1) * state.loddPris)} kr</div>
+          ` : `
+            ${line("egg", "Gårdsegg 30 stk", price.egg)}
+            ${line("korn", "Kornband", price.korn)}
+            ${line("potet", "Potet 3 kg", price.potet)}
+            <div class="total">${t} kr</div>
+            <p class="muted">Neste ledige vindu: ${nesteVindu()}</p>
+          `}
+        </article>
+        <article class="card">
+          <h3>Vipps-krav</h3>
+          <label class="muted">Kjøpers mobil</label>
+          <input id="payphone" inputmode="tel" placeholder="987 65 432" value="${state.phone}" />
+          <button class="clay grow" onclick="state.mode==='lodd' ? betalLoddFraKasse() : sendPay(${t})">Send krav</button>
+          <p class="muted" style="margin-top:10px">Naboen får varsel i Vipps. Gutten står ikke med ark og teller femtilapper. Varer hentes ${state.hente.dag}.</p>
+          <button class="ghost grow" style="margin-top:8px" onclick="state.faq='vipps'; go('losning')">Hvordan virker Vipps?</button>
+        </article>
+      </div>
+    `;
+  }
+  function line(key, label, p) {
+    return `<div class="list-row"><div><b>${label}</b><div class="muted">${p} kr</div></div>
+      <div class="qty">
+        <button onclick="state.cart.${key}=Math.max(0,state.cart.${key}-1); kasse()">−</button>
+        <b>${state.cart[key]}</b>
+        <button onclick="state.cart.${key}++; kasse()">+</button>
+      </div></div>`;
+  }
+  function betalLoddFraKasse() {
+    const el = document.getElementById("payphone");
+    const n = (el.value || "").replace(/\s/g, "");
+    if (!/^(\+47)?[49]\d{7}$/.test(n)) return toast("Ugyldig mobilnummer");
+    const ant = state._n || 1;
+    if (state.loddSolgt + ant > state.loddMax) return toast("Ikke nok lodd igjen");
+    for (let i = 0; i < ant; i++) {
+      state.loddSolgt++;
+      state.loddSum += state.loddPris;
+      const nr = String(state.loddSolgt).padStart(3, "0");
+      state.tickets.unshift({ nr, kjoper: fmtTlf(n), selger: state.selger, betalt: true });
+    }
+    toast(ant + " lodd betalt.");
+    kasse();
+  }
+  function sendPay(t) {
+    const n = (document.getElementById("payphone").value || "").replace(/\s/g, "");
+    if (t <= 0) return toast("Velg varer først");
+    if (!/^(\+47)?[49]\d{7}$/.test(n)) return toast("Ugyldig mobilnummer");
+    const vindu = nesteVindu();
+    const o = {
+      id: Date.now(),
+      navn: "Kjøper " + fmtTlf(n),
+      tlf: n,
+      egg: state.cart.egg,
+      korn: state.cart.korn,
+      potet: state.cart.potet,
+      betalt: true,
+      hentet: false,
+      selger: state.selger,
+      vindu
+    };
+    state.orders.unshift(o);
+    state.vareSum += t;
+    state.phone = "";
+    state.cart = { egg: 0, korn: 0, potet: 0 };
+    toast("Vipps godkjent. Henting " + vindu + ".");
+    kasse();
+  }
+
+  function kassa() {
+    const P = pakk(paid());
+    document.getElementById("screen").innerHTML = `
+      <p class="kicker">Styret · best på pad</p>
+      <h2>Kasserer</h2>
+      <div class="split">
+        <section class="hero">
+          <div class="muted">Netto i kassa</div>
+          <div class="money">${net().toLocaleString("nb-NO")} kr</div>
+          <p class="muted">Mål ${state.maalSum.toLocaleString("nb-NO")} · varer ${state.vareSum.toLocaleString("nb-NO")} · lodd ${state.loddSum.toLocaleString("nb-NO")} · jobb ${state.jobbSum.toLocaleString("nb-NO")}</p>
+        </section>
+        <article class="card">
+          <h3>Regneark mot Lagkassa</h3>
+          <table>
+            <tr><th></th><th>Regneark</th><th>Lagkassa</th></tr>
+            <tr><td>Hvem solgte #47</td><td>Lete i rad 84</td><td class="ok">Ligger på loddet</td></tr>
+            <tr><td>Betalt?</td><td>Manuell hake</td><td class="ok">Vipps = betalt</td></tr>
+            <tr><td>Henting</td><td>Esker hjemme</td><td class="ok">Ett sted, fire puljer</td></tr>
+            <tr><td>Bonden</td><td>Gjetting + rest</td><td class="ok">${P.egg} / ${P.korn} / ${P.potet}</td></tr>
+          </table>
+        </article>
+      </div>
+      <article class="card" style="margin-top:12px">
+        <h3>Salg per spiller</h3>
+        <table>
+          <tr><th>Spiller</th><th>Lodd</th><th>Varer</th><th>Vipps</th></tr>
+          <tr><td>Ola</td><td>22</td><td>6 egg</td><td class="ok">Ok</td></tr>
+          <tr><td>Håkon</td><td>18</td><td>3 korn</td><td class="ok">Ok</td></tr>
+          <tr><td>Emil</td><td>15</td><td>—</td><td class="ok">Ok</td></tr>
+          <tr><td>Sander</td><td>9</td><td>4 egg</td><td class="wait">1 venter</td></tr>
+        </table>
+        <div class="row">
+          <button class="primary grow" onclick="go('varer')">Åpne henteoppsett</button>
+          <button class="ghost grow" onclick="state.faq='vipps'; go('losning')">Vipps og løsningen</button>
+        </div>
+      </article>
+    `;
+  }
+
+  function toggleFaq(id) {
+    state.faq = state.faq === id ? "" : id;
+    losning();
+  }
+  function losning() {
+    const open = (id, q, body) => `
+      <div class="faq">
+        <button class="q" onclick="toggleFaq('${id}')"><span>${q}</span><span>${state.faq === id ? "−" : "+"}</span></button>
+        ${state.faq === id ? `<div class="a">${body}</div>` : ""}
+      </div>`;
+    document.getElementById("screen").innerHTML = `
+      <p class="kicker">Underlag</p>
+      <h2>Slik virker løsningen</h2>
+      <p class="muted" style="margin-bottom:12px">Til styret, foreldre og den som skal vise appen. Ikke en bruksanvisning for gutten i døra — han trenger bare kassa.</p>
+      <div class="split">
+        <article class="card">
+          ${open("hva", "Hva er Lagkassa?", `
+            <p class="muted">Én app for dugnaden til Gutter 13. Fire løp, ett Vipps-nummer. Ingen Excel, ingen konvolutt, ingen esker i gangen hjemme.</p>
+            <p class="muted">Pizzalodd, måldugnad, egg/potet/kornband og arbeidsoppdrag lander i samme kasse.</p>`)}
+          ${open("vipps", "Hvordan virker Vipps?", `
+            <p class="muted">Selgeren taster naboens mobil og sender et krav. Naboen får varsel i Vipps-appen og godkjenner beløpet. Først da er salget ekte.</p>
+            <ol class="steps">
+              <li>Velg varer eller antall lodd.</li>
+              <li>Tast mobilnummer.</li>
+              <li>Trykk Send krav — pengene går til lagets Vipps #54921.</li>
+              <li>Vipps svarer appen: betalt, avvist eller venter.</li>
+              <li>Betalt lodd får nummer. Betalt vare telles til bonden og får hentevindu.</li>
+            </ol>
+            <p class="muted">Ubetalt teller ikke. Sander nabo kan stå med egg i handlekurven uten at Haugen gård får den linjen.</p>
+            <p class="muted">I denne demoen er Vipps et spill. Ingen penger flytter seg. En ekte app trenger klubbens Vipps-avtale og en server som sender kravet og venter på svar.</p>`)}
+          ${open("kontant", "Kan vi ta kontanter?", `
+            <p class="muted">Nei, det er poenget. Femtilappen i skolesekken er det regnearket ikke får tak i. Vipps først, så vare eller lodd.</p>`)}
+          ${open("venter", "Hva hvis de ikke betaler?", `
+            <p class="muted">Salgslinjen blir stående som Venter. Den kommer ikke med i SMS til bonden. Den kommer ikke med i trekningen. Kasserer kan sende kravet på nytt — eller stryke det.</p>`)}
+        </article>
+        <article class="card">
+          ${open("bonde", "Hvordan vet bonden hva han skal levere?", `
+            <p class="muted">Appen summerer bare betalte ordrer. Ett trykk sender én SMS: så mange eggbrett, kornband og potetsekker, levering 16:45 på klubbhuset.</p>
+            <p class="muted">Derfor blir det ikke restlager. Det som ikke er betalt, blir ikke hentet fra gården.</p>`)}
+          ${open("hente", "Hvorfor fire tidsvindu?", `
+            <p class="muted">Alle skal ikke stå i døra klokka fem. Appen legger neste kjøper i det roligste vinduet. På pad ser vakta pakkeliste per pulje og krysser av.</p>`)}
+          ${open("excel", "Hvorfor ikke Excel?", `
+            <p class="muted">Regnearket vet ikke om 50-lappen kom inn. Det vet ikke hvem som solgte lodd 47. Trekning skjer i en bøtte. Purring ligger i tre chatter.</p>
+            <p class="muted">Her er Vipps svaret på «er det betalt?». Loddet, varen og kasserer-tavla leser samme status.</p>`)}
+          ${open("penger", "Hvem sitter med pengene?", `
+            <p class="muted">Laget. Ett Vipps-nummer. Kasserer ser mål, varer, lodd og jobb hver for seg, men summen er den samme kassa.</p>`)}
+        </article>
+      </div>
+      <div class="row">
+        <button class="clay grow" onclick="state.mode='varer'; go('kasse')">Prøv kassa</button>
+        <button class="ghost grow" onclick="go('hjem')">Tilbake</button>
+      </div>
+    `;
+  }
+
+  hjem();
+</script>
+</body>
+</html>
