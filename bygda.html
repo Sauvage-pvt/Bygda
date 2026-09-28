@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Bygda – finn laget ditt</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --fjord: #1b3a4b;
+      --fjord-2: #102833;
+      --moss: #3d6b4f;
+      --gold: #d4a017;
+      --clay: #c45c2d;
+      --cream: #f3ead7;
+      --paper: #fff8eb;
+      --ink: #1a1612;
+      --mute: #6d6458;
+      --line: #e4d7bf;
+      --ok: #1f7a45;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; }
+    body {
+      font-family: "Source Sans 3", system-ui, sans-serif;
+      background:
+        radial-gradient(900px 420px at 80% -10%, #2a4a5c 0%, transparent 55%),
+        #0b1014;
+      color: var(--ink);
+      display: flex;
+      justify-content: center;
+      padding: 12px;
+    }
+    .device {
+      width: min(1120px, 100%);
+      min-height: min(860px, calc(100vh - 24px));
+      background: var(--cream);
+      border-radius: 28px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 40px 80px rgba(0,0,0,.45);
+      border: 10px solid #1c1814;
+      position: relative;
+    }
+    .status {
+      height: 26px; background: var(--fjord); color: #d7c9a8;
+      font-size: 11px; display: flex; align-items: center;
+      justify-content: space-between; padding: 0 18px; letter-spacing: .08em;
+    }
+    header.app {
+      background: linear-gradient(180deg, var(--fjord), var(--fjord-2));
+      color: var(--cream); padding: 10px 18px 14px;
+      display: flex; justify-content: space-between; gap: 12px; align-items: center;
+    }
+    .club { display: flex; align-items: center; gap: 12px; }
+    .badge-crest {
+      width: 46px; height: 46px; border-radius: 14px;
+      background: linear-gradient(145deg, #7eb3c9, #2b6b82);
+      color: #07151c; display: grid; place-items: center;
+      font-family: Fraunces, serif; font-weight: 700; font-size: 18px;
+    }
+    header h1 { font-family: Fraunces, serif; font-size: 22px; line-height: 1.1; }
+    header p { font-size: 13px; opacity: .75; }
+    .wide-note { font-size: 12px; opacity: .7; text-align: right; max-width: 280px; }
+    .help-btn {
+      width: 36px; height: 36px; border-radius: 12px;
+      background: rgba(255,248,235,.12); color: var(--cream); font-weight: 800; flex-shrink: 0;
+    }
+    .screen { flex: 1; overflow: auto; padding: 16px 16px 100px; }
+    .split { display: grid; gap: 12px; }
+    .hero, .card {
+      background: var(--paper); border: 1px solid var(--line);
+      border-radius: 18px; padding: 16px;
+    }
+    .kicker { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--moss); font-weight: 700; }
+    h2 { font-family: Fraunces, serif; font-size: 28px; margin: 4px 0 8px; }
+    h3 { font-family: Fraunces, serif; font-size: 18px; margin-bottom: 6px; }
+    .muted { color: var(--mute); font-size: 14px; line-height: 1.45; }
+    .row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    button {
+      font: inherit; font-weight: 700; border: 0; cursor: pointer;
+      border-radius: 12px; padding: 11px 12px;
+    }
+    .primary { background: var(--fjord); color: var(--cream); }
+    .clay { background: var(--clay); color: #fff; }
+    .gold { background: var(--gold); color: #1a1612; }
+    .ghost { background: transparent; border: 1px solid var(--line); color: var(--mute); }
+    .grow { flex: 1; min-width: 140px; }
+    .nav {
+      position: absolute; left: 12px; right: 12px; bottom: 12px;
+      background: #fff8eb; border: 1px solid var(--line); border-radius: 22px;
+      display: grid; grid-template-columns: repeat(4, 1fr); padding: 6px;
+    }
+    .nav button {
+      background: transparent; color: var(--mute); font-size: 12px;
+      padding: 8px 4px; display: flex; flex-direction: column; gap: 2px; align-items: center;
+    }
+    .nav button.on { color: var(--fjord); background: #efe4cc; }
+    .pill { display: inline-block; background: #efe4cc; border-radius: 999px; padding: 3px 8px; font-size: 11px; font-weight: 700; margin-bottom: 6px; }
+    .pills { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0; }
+    .pills button { padding: 7px 10px; border-radius: 999px; background: #efe4cc; color: var(--ink); font-size: 13px; }
+    .pills button.on { background: var(--fjord); color: var(--cream); }
+    input, textarea, select {
+      width: 100%; border: 1px solid var(--line); background: #fff; border-radius: 12px;
+      padding: 12px; font: inherit; margin: 6px 0 10px;
+    }
+    .toast {
+      position: absolute; left: 16px; right: 16px; top: 40px;
+      background: var(--fjord); color: var(--cream); padding: 12px 14px;
+      border-radius: 14px; display: none; z-index: 5;
+    }
+    .list-row {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      padding: 12px 0; border-bottom: 1px solid var(--line); gap: 10px;
+    }
+    .ok { color: var(--ok); font-weight: 700; }
+    .wait { color: #9a6b12; font-weight: 700; }
+    .stack { display: grid; gap: 12px; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+    .stat { background: #efe4cc; border-radius: 14px; padding: 10px; }
+    .stat b { display: block; font-size: 18px; }
+    .stat span { font-size: 11px; color: var(--mute); }
+    .faq { border-top: 1px solid var(--line); padding: 12px 0; }
+    .faq:first-child { border-top: 0; padding-top: 0; }
+    .faq button.q {
+      width: 100%; text-align: left; background: transparent; color: var(--ink);
+      padding: 0; display: flex; justify-content: space-between; gap: 12px; font-size: 16px;
+    }
+    .cost { background: #f6e4d4; border-radius: 12px; padding: 10px 12px; font-size: 13px; margin: 8px 0; }
+    .org-km { font-family: Fraunces, serif; font-size: 20px; color: var(--fjord); white-space: nowrap; }
+    @media (min-width: 820px) {
+      .split { grid-template-columns: 1.1fr .9fr; align-items: start; }
+      .screen { padding: 20px 22px 108px; }
+      header h1 { font-size: 26px; }
+      .wide-note { display: block; }
+    }
+    @media (max-width: 819px) {
+      .device { width: min(430px, 100%); min-height: min(900px, calc(100vh - 24px)); }
+      .wide-note { display: none; }
+      header.app { align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="device">
+    <div class="status"><span>14:55</span><span>BYGDA · TELEFON OG PAD</span><span>5G</span></div>
+    <header class="app">
+      <div class="club">
+        <div class="badge-crest">B</div>
+        <div>
+          <h1>Bygda</h1>
+          <p>Finn laget · Egge og omegn</p>
+        </div>
+      </div>
+      <div class="wide-note">Søsterapp til Lagkassa. Her finner folk laget. Der driver laget dugnad.</div>
+      <button class="help-btn" onclick="go('hjelp')">?</button>
+    </header>
+    <div class="toast" id="toast"></div>
+    <div class="screen" id="screen"></div>
+    <nav class="nav">
+      <button class="on" data-go="hjem" onclick="go('hjem')">⌂<span>Hjem</span></button>
+      <button data-go="sok" onclick="go('sok')">⌕<span>Søk</span></button>
+      <button data-go="liste" onclick="go('liste')">☰<span>Liste</span></button>
+      <button data-go="inviter" onclick="go('inviter')">✉<span>Inviter</span></button>
+    </nav>
+  </div>
+<script>
+  const KM_PER_MILE = 1.60934;
+  const SMS_KR = 0.59;
+  const state = {
+    sted: "Egge",
+    enhet: "km",
+    radius: 20,
+    q: "",
+    type: "alle",
+    valgt: null,
+    faq: "sok",
+    listeNavn: "Egge lagsliste 2026",
+    manuell: `Egge IL;idrett;2;eggeil@example.no;97712334
+Egge historielag;kultur;6;historie@example.no;
+4H Egge;barn;4;4h.egge@example.no;90011223
+Bygdekvinnelaget Egge;lokalsamfunn;8;bkl.egge@example.no;`,
+    inviter: { kanal: "epost", utvalg: "lista", tekst: "" },
+    sendt: []
+  };
+
+  const org = [
+    { id: 1, navn: "Egge IL", type: "idrett", km: 1.2, medlem: 420, aapen: true, trenger: "Trenere G13", kort: "Fotball, ski og allidrett. Gutter 13 bruker Lagkassa til dugnad.", epost: "post@eggeil.no", tlf: "74123456", alder: "6–19" },
+    { id: 2, navn: "Egge IL Gutter 13", type: "idrett", km: 1.2, medlem: 18, aapen: true, trenger: "Flere foreldre på dugnad", kort: "Laget som allerede har Lagkassa-demoen.", epost: "g13@eggeil.no", tlf: "97712334", alder: "12–13" },
+    { id: 3, navn: "4H Egge", type: "barn", km: 3.4, medlem: 34, aapen: true, trenger: "Klubbleder", kort: "Dyr, grøde og møte hver annen onsdag.", epost: "4h.egge@example.no", tlf: "90011223", alder: "8–16" },
+    { id: 4, navn: "Egge historielag", type: "kultur", km: 2.1, medlem: 67, aapen: true, trenger: "Arkivhjelp", kort: "Gårdsarkiv, turer og årbok.", epost: "historie@example.no", tlf: "", alder: "Voksen" },
+    { id: 5, navn: "Bygdekvinnelaget Egge", type: "lokalsamfunn", km: 2.8, medlem: 41, aapen: true, trenger: "Kasserer", kort: "Matkultur, husflid og møte i bygdehuset.", epost: "bkl.egge@example.no", tlf: "91555666", alder: "Voksen" },
+    { id: 6, navn: "Speidergruppa Egge", type: "barn", km: 4.0, medlem: 22, aapen: true, trenger: "Ledere", kort: "Tirsdag i kjelleren på klubbhuset.", epost: "speider@example.no", tlf: "98877665", alder: "8–16" },
+    { id: 7, navn: "Innherred kor", type: "kultur", km: 14.5, medlem: 28, aapen: true, trenger: "Tenorer", kort: "Øver i Steinkjer. Høstkonsert i november.", epost: "kor@example.no", tlf: "", alder: "16+" },
+    { id: 8, navn: "Steinkjer jakt- og fiskelag", type: "lokalsamfunn", km: 16.2, medlem: 190, aapen: false, trenger: "", kort: "Medlemskap via årsmøte. Venteliste på jaktkort.", epost: "jff@example.no", tlf: "74110000", alder: "16+" },
+    { id: 9, navn: "FAU Egge skole", type: "lokalsamfunn", km: 0.8, medlem: 12, aapen: true, trenger: "Klasseforeldre 5. trinn", kort: "Ikke et lag du «melder deg inn i», men de trenger folk.", epost: "fau@egge-skole.no", tlf: "", alder: "Foreldre" },
+    { id: 10, navn: "Pensjonistforeningen Egge", type: "lokalsamfunn", km: 1.9, medlem: 88, aapen: true, trenger: "Turleder", kort: "Onsdagskaffe og busstur en gang i måneden.", epost: "pensjon@example.no", tlf: "90099887", alder: "60+" },
+    { id: 11, navn: "Verdal IL håndball", type: "idrett", km: 28.0, medlem: 210, aapen: true, trenger: "Dommere", kort: "Utenfor 20 km hvis du bor på Egge.", epost: "handball@verdalil.no", tlf: "", alder: "6–19" },
+    { id: 12, navn: "Inderøy historielag", type: "kultur", km: 22.4, medlem: 54, aapen: true, trenger: "", kort: "Årbok og gårdsvandring.", epost: "inderoyhist@example.no", tlf: "", alder: "Voksen" }
+  ];
+
+  const typer = [
+    { id: "alle", navn: "Alle" },
+    { id: "idrett", navn: "Idrett" },
+    { id: "barn", navn: "Barn og ungdom" },
+    { id: "kultur", navn: "Kultur" },
+    { id: "lokalsamfunn", navn: "Lokalsamfunn" }
+  ];
+
+  function visKm(km) {
+    if (state.enhet === "mil") return (km / 10).toFixed(1).replace(".", ",") + " mil";
+    if (state.enhet === "miles") return (km / KM_PER_MILE).toFixed(1).replace(".", ",") + " mi";
+    return km.toFixed(1).replace(".", ",") + " km";
+  }
+  function radiusKm() {
+    if (state.enhet === "mil") return state.radius * 10;
+    if (state.enhet === "miles") return state.radius * KM_PER_MILE;
+    return state.radius;
+  }
+  function filtrert() {
+    const r = radiusKm();
+    const q = state.q.trim().toLowerCase();
+    return org.filter(o => {
+      if (o.km > r) return false;
+      if (state.type !== "alle" && o.type !== state.type) return false;
+      if (q && !(o.navn + " " + o.kort + " " + o.trenger).toLowerCase().includes(q)) return false;
+      return true;
+    }).sort((a, b) => a.km - b.km);
+  }
+  function go(name) {
+    document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("on", b.dataset.go === name));
+    ({ hjem, sok, detalj, liste, inviter, hjelp }[name] || hjem)();
+  }
+  function toast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg; t.style.display = "block";
+    setTimeout(() => t.style.display = "none", 2600);
+  }
+  function apne(id) {
+    state.valgt = org.find(o => o.id === id);
+    go("detalj");
+  }
+
+  function hjem() {
+    const n = filtrert().length;
+    const trenger = org.filter(o => o.trenger && o.km <= radiusKm());
+    document.getElementById("screen").innerHTML = `
+      <div class="split">
+        <section class="hero">
+          <div class="kicker">Du er i ${state.sted}</div>
+          <h2>Hva skjer i bygda?</h2>
+          <p class="muted">${n} lag innen ${state.radius} ${state.enhet}. Du velger selv hvor langt du vil se.</p>
+          <div class="stats">
+            <div class="stat"><b>${org.length}</b><span>lag i registeret</span></div>
+            <div class="stat"><b>${n}</b><span>innen rekkevidde</span></div>
+            <div class="stat"><b>${trenger.length}</b><span>søker folk</span></div>
+          </div>
+          <div class="row">
+            <button class="primary grow" onclick="go('sok')">Søk etter lag</button>
+            <button class="ghost grow" onclick="go('liste')">Last opp lista vår</button>
+          </div>
+        </section>
+        <div class="stack">
+          <article class="card">
+            <span class="pill">De trenger folk</span>
+            <h3>Åpne verv</h3>
+            ${trenger.slice(0, 4).map(o => `
+              <div class="list-row">
+                <div>
+                  <b>${o.navn}</b>
+                  <div class="muted">${o.trenger} · ${visKm(o.km)}</div>
+                </div>
+                <button class="ghost" onclick="apne(${o.id})">Se</button>
+              </div>`).join("")}
+          </article>
+          <article class="card">
+            <span class="pill">To apper</span>
+            <h3>Bygda og Lagkassa</h3>
+            <p class="muted">Bygda finner medlemmer. Lagkassa tar dugnaden når de er inne. Ikke samme app.</p>
+            <a class="btn primary grow" href="lagkassa.html" style="display:block;text-align:center;text-decoration:none;padding:11px 12px;border-radius:12px;background:#1b3a4b;color:#fff8eb;font-weight:700">Åpne Lagkassa-demo</a>
+          </article>
+        </div>
+      </div>
+    `;
+  }
+
+  function radiusFelt() {
+    const steg = state.enhet === "mil" ? [1, 2, 3, 5] : state.enhet === "miles" ? [3, 6, 12, 30] : [5, 10, 20, 50];
+    return `
+      <div class="pills">
+        ${["km", "mil", "miles"].map(e =>
+          `<button class="${state.enhet === e ? "on" : ""}" onclick="state.enhet='${e}'; state.radius=${e === "mil" ? 2 : e === "miles" ? 12 : 20}; go(state._side || 'sok')">${e}</button>`
+        ).join("")}
+      </div>
+      <div class="pills">
+        ${steg.map(v =>
+          `<button class="${state.radius === v ? "on" : ""}" onclick="state.radius=${v}; go(state._side || 'sok')">${v} ${state.enhet}</button>`
+        ).join("")}
+      </div>
+      <p class="muted">Du setter grensa selv. Ingen «hele fylket» med mindre du vil.</p>`;
+  }
+
+  function sok() {
+    state._side = "sok";
+    const list = filtrert();
+    document.getElementById("screen").innerHTML = `
+      <p class="kicker">Organisasjonssøk</p>
+      <h2>Finn laget</h2>
+      <input value="${state.q.replace(/"/g, """)}" placeholder="Navn, verv, kor, 4H…" oninput="state.q=this.value; sok()" />
+      ${radiusFelt()}
+      <div class="pills">
+        ${typer.map(t =>
+          `<button class="${state.type === t.id ? "on" : ""}" onclick="state.type='${t.id}'; sok()">${t.navn}</button>`
+        ).join("")}
+      </div>
+      <p class="muted" style="margin-bottom:8px">${list.length} treff fra ${state.sted}.</p>
+      <div class="split">
+        <div>
+          ${list.map(o => `
+            <article class="card" style="margin-bottom:10px">
+              <span class="pill">${typer.find(t => t.id === o.type).navn}${o.aapen ? "" : " · stengt"}</span>
+              <div class="list-row" style="border:0;padding:0">
+                <div>
+                  <h3>${o.navn}</h3>
+                  <p class="muted">${o.kort}</p>
+                </div>
+                <div class="org-km">${visKm(o.km)}</div>
+              </div>
+              <p class="muted">${o.medlem} medlemmer · ${o.alder}${o.trenger ? " · søker: " + o.trenger : ""}</p>
+              <div class="row">
+                <button class="primary grow" onclick="apne(${o.id})">Åpne laget</button>
+                <button class="ghost grow" onclick="state.valgt=org.find(x=>x.id===${o.id}); go('inviter')">Inviter hit</button>
+              </div>
+            </article>`).join("") || `<article class="card"><p class="muted">Ingen lag innen ${state.radius} ${state.enhet}. Utvid radius eller bytt filter.</p></article>`}
+        </div>
+        <article class="card">
+          <h3>Hvorfor avstand?</h3>
+          <p class="muted">En familie på Egge skal ikke få 80 treff i hele Trøndelag. De skal se det som er sykkelavstand — eller mil, om de vil.</p>
+          <p class="muted">Jaktlaget 16 km unna vises på 20 km, ikke på 5. Verdal IL forsvinner når du skrur ned.</p>
+        </article>
+      </div>
+    `;
+  }
+
+  function detalj() {
+    const o = state.valgt;
+    if (!o) return go("sok");
+    document.getElementById("screen").innerHTML = `
+      <p class="kicker">${typer.find(t => t.id === o.type).navn} · ${visKm(o.km)} fra ${state.sted}</p>
+      <h2>${o.navn}</h2>
+      <div class="split">
+        <article class="card">
+          <p class="muted">${o.kort}</p>
+          <div class="stats">
+            <div class="stat"><b>${o.medlem}</b><span>medlemmer</span></div>
+            <div class="stat"><b>${o.alder}</b><span>alder</span></div>
+            <div class="stat"><b>${o.aapen ? "Åpent" : "Stengt"}</b><span>inntak</span></div>
+          </div>
+          ${o.trenger ? `<p class="muted" style="margin-top:10px"><b>Søker:</b> ${o.trenger}</p>` : ""}
+          <div class="row">
+            <button class="primary grow" onclick="toast('Forespørsel sendt til ' + state.valgt.navn + '. De tar kontakt.')">Jeg vil være med</button>
+            <button class="ghost grow" onclick="go('inviter')">Inviter noen</button>
+          </div>
+        </article>
+        <article class="card">
+          <h3>Kontakt</h3>
+          <div class="list-row"><span>E-post</span><b>${o.epost || "—"}</b></div>
+          <div class="list-row"><span>Telefon</span><b>${o.tlf || "Ikke oppgitt"}</b></div>
+          <p class="muted" style="margin-top:10px">Bygda lagrer ikke at du «liker» laget. Du sender en forespørsel. Laget svarer.</p>
+          ${o.id === 2 ? `<a href="lagkassa.html" style="display:block;margin-top:12px;text-align:center;padding:11px;border-radius:12px;background:#c45c2d;color:#fff;font-weight:700;text-decoration:none">Dette laget bruker Lagkassa</a>` : ""}
+        </article>
+      </div>
+      <button class="ghost grow" style="margin-top:12px" onclick="go('sok')">Tilbake til søk</button>
+    `;
+  }
+
+  function parseListe() {
+    return state.manuell.split("\n").map(l => l.trim()).filter(Boolean).map((l, i) => {
+      const [navn, type, km, epost, tlf] = l.split(";").map(s => (s || "").trim());
+      return { i, navn, type: type || "ukjent", km: Number(km || 0), epost, tlf };
+    });
+  }
+
+  function liste() {
+    const rader = parseListe();
+    document.getElementById("screen").innerHTML = `
+      <p class="kicker">Manuell liste</p>
+      <h2>Har bygda lista fra før?</h2>
+      <p class="muted">Mange har allerede et ark med lag og kontakt. Lim inn her. Ett lag per linje: navn;type;km;epost;mobil</p>
+      <div class="split">
+        <article class="card">
+          <label class="muted">Listenavn</label>
+          <input value="${state.listeNavn}" oninput="state.listeNavn=this.value" />
+          <label class="muted">Lim inn</label>
+          <textarea rows="8" oninput="state.manuell=this.value">${state.manuell}</textarea>
+          <div class="row">
+            <button class="primary grow" onclick="toast(parseListe().length + ' lag lest inn i ' + state.listeNavn); liste()">Les inn lista</button>
+            <button class="ghost grow" onclick="go('inviter')">Inviter fra lista</button>
+          </div>
+        </article>
+        <article class="card">
+          <h3>${rader.length} lag i arket</h3>
+          ${rader.map(r => `
+            <div class="list-row">
+              <div><b>${r.navn}</b><div class="muted">${r.type} · ${r.km} km · ${r.epost || "mangler e-post"}</div></div>
+              <span class="${r.epost ? "ok" : "wait"}">${r.epost ? "Kan e-post" : "Mangler"}</span>
+            </div>`).join("")}
+          <p class="muted" style="margin-top:10px">Lista eies av bygda, ikke av oss. Den brukes bare til invitasjon dere selv starter.</p>
+        </article>
+      </div>
+    `;
+  }
+
+  function mottakere() {
+    if (state.inviter.utvalg === "ett" && state.valgt) {
+      return [{ navn: state.valgt.navn, epost: state.valgt.epost, tlf: state.valgt.tlf }];
+    }
+    return parseListe();
+  }
+
+  function inviter() {
+    const m = mottakere();
+    const medEpost = m.filter(x => x.epost);
+    const medSms = m.filter(x => x.tlf);
+    const smsKost = (medSms.length * SMS_KR).toFixed(2).replace(".", ",");
+    document.getElementById("screen").innerHTML = `
+      <p class="kicker">Rekruttering</p>
+      <h2>Inviter til laget</h2>
+      <p class="muted">E-post er inkludert. SMS går via operatør og koster ekstra — derfor ligger prisen synlig før du sender.</p>
+      <div class="split">
+        <article class="card">
+          <label class="muted">Hvem</label>
+          <div class="pills">
+            <button class="${state.inviter.utvalg === "lista" ? "on" : ""}" onclick="state.inviter.utvalg='lista'; inviter()">Hele lista (${parseListe().length})</button>
+            <button class="${state.inviter.utvalg === "ett" ? "on" : ""}" onclick="state.inviter.utvalg='ett'; inviter()">Valgt lag${state.valgt ? ": " + state.valgt.navn : ""}</button>
+          </div>
+          <label class="muted">Kanal</label>
+          <div class="pills">
+            <button class="${state.inviter.kanal === "epost" ? "on" : ""}" onclick="state.inviter.kanal='epost'; inviter()">E-post · inkludert</button>
+            <button class="${state.inviter.kanal === "sms" ? "on" : ""}" onclick="state.inviter.kanal='sms'; inviter()">SMS · ${SMS_KR.toString().replace(".", ",")} kr/stk</button>
+            <button class="${state.inviter.kanal === "begge" ? "on" : ""}" onclick="state.inviter.kanal='begge'; inviter()">Begge</button>
+          </div>
+          ${state.inviter.kanal !== "epost" ? `
+            <div class="cost">
+              SMS til ${medSms.length} nummer ≈ <b>${smsKost} kr</b>.
+              Bygda tar ikke slikt uten at styret huker av. E-post anbefales først.
+            </div>` : `<p class="muted">${medEpost.length} har e-post. Ingen stykkpris.</p>`}
+          <label class="muted">Melding</label>
+          <textarea rows="4" oninput="state.inviter.tekst=this.value" placeholder="Hei. Vi trenger folk til ${state.valgt ? state.valgt.navn : "laget"}. Åpent hus torsdag.">${state.inviter.tekst}</textarea>
+          <button class="clay grow" onclick="sendInv()">${state.inviter.kanal === "epost" ? "Send e-post" : state.inviter.kanal === "sms" ? "Send SMS (" + smsKost + " kr)" : "Send e-post og SMS"}</button>
+        </article>
+        <article class="card">
+          <h3>Mottakere</h3>
+          ${m.map(x => `
+            <div class="list-row">
+              <div><b>${x.navn}</b><div class="muted">${x.epost || "ingen e-post"} · ${x.tlf || "ingen mobil"}</div></div>
+            </div>`).join("")}
+          ${state.sendt.length ? `<p class="ok" style="margin-top:10px">Sist sendt: ${state.sendt[0]}</p>` : ""}
+          <p class="muted" style="margin-top:10px">Demoen sender ikke ekte post eller SMS.</p>
+        </article>
+      </div>
+    `;
+  }
+
+  function sendInv() {
+    const m = mottakere();
+    if (state.inviter.kanal !== "epost" && !m.some(x => x.tlf)) return toast("Ingen mobilnummer i utvalget");
+    if (state.inviter.kanal !== "sms" && !m.some(x => x.epost)) return toast("Ingen e-post i utvalget");
+    const n = m.length;
+    const kanal = state.inviter.kanal === "epost" ? "e-post" : state.inviter.kanal === "sms" ? "SMS" : "e-post + SMS";
+    state.sendt.unshift(n + " via " + kanal);
+    toast("Demo: " + n + " invitasjoner markert som sendt (" + kanal + ").");
+    inviter();
+  }
+
+  function toggleFaq(id) {
+    state.faq = state.faq === id ? "" : id;
+    hjelp();
+  }
+  function hjelp() {
+    const open = (id, q, body) => `
+      <div class="faq">
+        <button class="q" onclick="toggleFaq('${id}')"><span>${q}</span><span>${state.faq === id ? "−" : "+"}</span></button>
+        ${state.faq === id ? `<div class="a" style="margin-top:8px">${body}</div>` : ""}
+      </div>`;
+    document.getElementById("screen").innerHTML = `
+      <p class="kicker">Underlag</p>
+      <h2>Bygda, ikke Lagkassa</h2>
+      <p class="muted" style="margin-bottom:12px">Denne appen er oppdagelse og verving. Den andre er dugnad når laget allerede finnes.</p>
+      <div class="split">
+        <article class="card">
+          ${open("sok", "Hva er organisasjonssøk?", `
+            <p class="muted">Søk på navn eller type. Radius er din. Km, mil eller miles — du velger. Lista sorteres nærmest først.</p>`)}
+          ${open("liste", "Hva er manuell liste?", `
+            <p class="muted">Har bygdetunet eller kommunen et ark fra før, limer dere det inn. Bygda trenger ikke å «oppdage» lag som allerede er kjent lokalt.</p>`)}
+          ${open("epost", "Hvorfor e-post først?", `
+            <p class="muted">E-post koster ikke per stykk og kan ha lenke rett til laget. SMS når noen uten e-post, eller når det haster.</p>`)}
+          ${open("sms", "Hva koster SMS?", `
+            <p class="muted">I demoen er prisen ${SMS_KR.toString().replace(".", ",")} kr per melding. Ekte pris avhenger av leverandør. Styret ser summen før sending. Ingen skjult trekk.</p>`)}
+        </article>
+        <article class="card">
+          ${open("flere", "Andre ideer i utkastet", `
+            <p class="muted">Åpne verv på forsida. «Jeg vil være med» som forespørsel, ikke offentlig medlemsliste. Kobling til Lagkassa for lag som allerede driver dugnad. Filter på alder. Stengte lag (jaktkort) vises, men uten å late som alle kan melde seg inn i dag.</p>`)}
+          ${open("ikke", "Hva Bygda ikke er", `
+            <p class="muted">Ikke Facebook. Ikke nasjonalt medlemsregister. Ikke betaling. Pengene og pizzaloddene bor i Lagkassa.</p>`)}
+        </article>
+      </div>
+    `;
+  }
+
+  hjem();
+</script>
+</body>
+</html>
