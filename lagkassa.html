@@ -197,7 +197,7 @@
           <p>Høstdugnad 2026 · Vipps #54921</p>
         </div>
       </div>
-      <div class="wide-note">Samme app på telefon og iPad. <a href="bygda.html" style="color:#f3ead7">Bygda-søsterappen</a> finner laget. Denne driver dugnad.</div>
+      <div class="wide-note">Samme app på telefon og iPad. På pad får kasserer to kolonner. Ingen egen nettbrettapp.</div>
       <button class="help-btn" onclick="go('losning')" title="Slik virker løsningen">?</button>
     </header>
     <div class="toast" id="toast"></div>
@@ -230,6 +230,7 @@
     bonde: "Haugen gård",
     filter: "åpne",
     faq: "vipps",
+    listet: false,
     hente: { sted: "Klubbhuset", dag: "Torsdag 2. okt", fra: "17:00", til: "19:00", last: "16:45" },
     vinduer: ["17:00–17:30", "17:30–18:00", "18:00–18:30", "18:30–19:00"],
     orders: [
@@ -332,7 +333,7 @@
   }
   function go(name) {
     document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("on", b.dataset.go === name));
-    ({ hjem, dugnad, maal, varer, pizza, oppdrag, kasse, kassa, losning }[name] || hjem)();
+    ({ hjem, dugnad, maal, varer, pizza, oppdrag, kasse, kassa, losning, opplisting }[name] || hjem)();
   }
   function toast(msg) {
     const t = document.getElementById("toast");
@@ -429,6 +430,12 @@
           <h3>Arbeidsoppdrag</h3>
           <p class="muted">Gård legger ut jobb. Laget tar den.</p>
           <div class="row"><button class="gold grow" onclick="go('oppdrag')">Tavla</button></div>
+        </article>
+        <article class="card">
+          <span class="pill">${state.listet ? "Synlig" : "Skisse · av"}</span>
+          <h3>Opplisting av dugnader</h3>
+          <p class="muted">Hvis laget blir lagt inn utad, kan pågående dugnader vises for folk i nærheten. Egge G13 er ikke lagt inn ennå.</p>
+          <div class="row"><button class="ghost grow" onclick="go('opplisting')">Se skissen</button></div>
         </article>
       </div>
     `;
@@ -628,6 +635,38 @@
     varer();
   }
 
+  function opplisting() {
+    document.getElementById("screen").innerHTML = `
+      <p class="kicker">Skisse · ikke slått på</p>
+      <h2>Opplisting av dugnader</h2>
+      <p class="muted" style="margin-bottom:12px">Hvis laget senere blir lagt inn utad, kan pågående dugnader vises for folk i nærheten. Egge G13 ser ikke den andre appen ennå. Dette er bare et utkast inne i Lagkassa.</p>
+      <div class="split">
+        <article class="card">
+          <span class="pill">${state.listet ? "Ville vært synlig" : "Av · ikke lagt inn"}</span>
+          <h3>Hva som kunne listes</h3>
+          <div class="list-row"><span>Pizzalodd mot Bakeriet</span><b>${state.loddSolgt} solgt</b></div>
+          <div class="list-row"><span>Egg, potet, kornband · ${state.hente.dag}</span><b>${sumOrders("egg")} egg</b></div>
+          <div class="list-row"><span>Måldugnad</span><b>${state.goals} mål</b></div>
+          <p class="muted" style="margin-top:10px">Naboen ville sett dugnaden, ikke kassa, ikke hvem som skylder. Bare at laget kjører noe, og hvordan de er med.</p>
+          <div class="row">
+            <button class="${state.listet ? "primary" : "ghost"} grow" onclick="state.listet=!state.listet; toast(state.listet ? 'Skisse: slått på. Ikke synlig for noen ekte.' : 'Skisse slått av.'); opplisting()">
+              ${state.listet ? "Skisse er på" : "Prøv skissen på"}
+            </button>
+          </div>
+        </article>
+        <article class="card">
+          <h3>Forhåndsvisning</h3>
+          ${state.listet ? `
+            <p class="muted">Slik det ville sett ut for en i bygda — hvis laget først var lagt inn:</p>
+            <div class="list-row"><div><b>Egge IL Gutter 13</b><div class="muted">Pizzalodd · ${state.loddPris} kr · Vipps</div></div><span class="ok">Åpen</span></div>
+            <div class="list-row"><div><b>Høstvarer</b><div class="muted">${henteTekst()}</div></div><span class="ok">Forhåndsbetalt</span></div>
+          ` : `<p class="muted">Ingenting vises utad. Laget er ikke lagt inn. Guttene og foreldrene bruker bare kassa, loddboka og henteoppsettet.</p>`}
+          <button class="ghost grow" style="margin-top:10px" onclick="state.faq='liste'; go('losning')">Les i spørsmål og svar</button>
+        </article>
+      </div>
+    `;
+  }
+
   function oppdrag() {
     document.getElementById("screen").innerHTML = `
       <h2>Oppdragstavla</h2>
@@ -786,7 +825,7 @@
         </table>
         <div class="row">
           <button class="primary grow" onclick="go('varer')">Åpne henteoppsett</button>
-          <button class="ghost grow" onclick="state.faq='vipps'; go('losning')">Vipps og løsningen</button>
+          <button class="ghost grow" onclick="go('opplisting')">Opplisting</button>
         </div>
       </article>
     `;
@@ -846,6 +885,9 @@
             <p class="muted">Her er Vipps svaret på «er det betalt?». Loddet, varen og kasserer-tavla leser samme status.</p>`)}
           ${open("penger", "Hvem sitter med pengene?", `
             <p class="muted">Laget. Ett Vipps-nummer. Kasserer ser mål, varer, lodd og jobb hver for seg, men summen er den samme kassa.</p>`)}
+          ${open("liste", "Kan dugnadene listes opp utad?", `
+            <p class="muted">Ja, men bare hvis laget først blir lagt inn et annet sted — og bare det styret huker av. Pizzalodd, høstvarer og måldugnad kan da vises som «pågår», uten kassa, uten hvem som skylder.</p>
+            <p class="muted">Egge G13 er ikke lagt inn ennå. Derfor ser ikke laget den andre appen her, og ingenting fra denne demoen ligger synlig utad. Skissen ligger under Dugnad → Opplisting.</p>`)}
         </article>
       </div>
       <div class="row">
