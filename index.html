@@ -212,7 +212,7 @@
 <script>
   const state = {
     goals: 18, cap: 30, sponsors: 32,
-    maalSum: 4120, vareSum: 1700, loddSum: 4500, jobbSum: 0,
+    maalSum: 4120, vareSum: 2275, loddSum: 4500, jobbSum: 0,
     cart: { egg: 1, korn: 2, potet: 0 },
     phone: "",
     mode: "varer",
@@ -235,7 +235,20 @@
       { id: 1, navn: "Kari Moen", tlf: "97712334", egg: 2, korn: 1, potet: 0, betalt: true, hentet: true, selger: "Ola", vindu: "17:00–17:30" },
       { id: 2, navn: "Bestefar", tlf: "90011223", egg: 1, korn: 2, potet: 1, betalt: true, hentet: false, selger: "Håkon", vindu: "17:30–18:00" },
       { id: 3, navn: "Haugen Rør", tlf: "91555666", egg: 4, korn: 0, potet: 2, betalt: true, hentet: false, selger: "Emil", vindu: "17:00–17:30" },
-      { id: 4, navn: "Sander nabo", tlf: "98877665", egg: 1, korn: 1, potet: 0, betalt: false, hentet: false, selger: "Sander", vindu: "" }
+      { id: 4, navn: "Sander nabo", tlf: "98877665", egg: 1, korn: 1, potet: 0, betalt: false, hentet: false, selger: "Sander", vindu: "" },
+      { id: 5, navn: "Liv Haugen", tlf: "90122334", egg: 3, korn: 0, potet: 1, betalt: true, hentet: false, selger: "Ola", vindu: "18:00–18:30" },
+      { id: 6, navn: "Coop-kiosken", tlf: "91500112", egg: 2, korn: 4, potet: 2, betalt: true, hentet: false, selger: "Håkon", vindu: "18:30–19:00" }
+    ],
+    salg: [
+      { t: "18:41", type: "varer", tekst: "Coop-kiosken · 2 egg · 4 korn · 2 potet", belop: 630, selger: "Håkon", betalt: true },
+      { t: "18:12", type: "lodd", tekst: "Haugen Rør · 3 pizzalodd #088–090", belop: 150, selger: "Emil", betalt: true },
+      { t: "17:58", type: "varer", tekst: "Liv Haugen · 3 egg · 1 potet", belop: 410, selger: "Ola", betalt: true },
+      { t: "17:40", type: "lodd", tekst: "Bestefar · lodd #015", belop: 50, selger: "Håkon", betalt: true },
+      { t: "17:21", type: "varer", tekst: "Haugen Rør · 4 egg · 2 potet", belop: 600, selger: "Emil", betalt: true },
+      { t: "16:55", type: "lodd", tekst: "Kari Moen · lodd #014", belop: 50, selger: "Ola", betalt: true },
+      { t: "16:44", type: "varer", tekst: "Bestefar · 1 egg · 2 korn · 1 potet", belop: 340, selger: "Håkon", betalt: true },
+      { t: "16:18", type: "varer", tekst: "Kari Moen · 2 egg · 1 korn", belop: 295, selger: "Ola", betalt: true },
+      { t: "16:02", type: "lodd", tekst: "Sander nabo · lodd #017", belop: 50, selger: "Sander", betalt: false }
     ]
   };
   const price = { egg: 110, korn: 75, potet: 80 };
@@ -268,6 +281,26 @@
   function fmtTlf(n) {
     const s = String(n).replace(/\D/g, "").slice(-8);
     return s.slice(0, 3) + " " + s.slice(3, 5) + " " + s.slice(5);
+  }
+  function klokke() {
+    const d = new Date();
+    return String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
+  }
+  function registrerSalg(s) {
+    state.salg.unshift({ t: klokke(), betalt: true, ...s });
+  }
+  function salgListe(n) {
+    return (state.salg || []).slice(0, n).map(s => `
+      <div class="ticket">
+        <div>
+          <b>${s.tekst}</b>
+          <div class="muted">${s.t} · ${s.selger} · ${s.type === "lodd" ? "Pizzalodd" : "Varer"}</div>
+        </div>
+        <div style="text-align:right">
+          <b>${s.belop} kr</b>
+          <div class="${s.betalt ? "ok" : "wait"}">${s.betalt ? "Vipps" : "Venter"}</div>
+        </div>
+      </div>`).join("");
   }
   function go(name) {
     document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("on", b.dataset.go === name));
@@ -313,6 +346,15 @@
             <div class="row">
               <button class="primary grow" onclick="go('varer')">Smart henteoppsett</button>
               <button class="ghost grow" onclick="state.mode='varer'; go('kasse')">Selg i døra</button>
+            </div>
+          </article>
+          <article class="card">
+            <span class="pill">Live</span>
+            <h3>Siste salg</h3>
+            <p class="muted">${state.salg.filter(s => s.betalt).length} betalt · ${state.salg.filter(s => !s.betalt).length} venter. Nye salg fra kassa lander her.</p>
+            ${salgListe(6)}
+            <div class="row">
+              <button class="ghost grow" onclick="go('kassa')">Se alle hos kasserer</button>
             </div>
           </article>
           <article class="card">
@@ -431,6 +473,12 @@
       state.tickets.unshift({ nr, kjoper: fmtTlf(n), selger: state.selger, betalt: true });
     }
     toast(ant + " lodd betalt. Siste nummer " + String(state.loddSolgt).padStart(3, "0") + ".");
+    registrerSalg({
+      type: "lodd",
+      tekst: fmtTlf(n) + " · " + ant + " pizzalodd #" + String(state.loddSolgt).padStart(3, "0"),
+      belop: ant * state.loddPris,
+      selger: state.selger
+    });
     pizza();
   }
 
@@ -631,6 +679,12 @@
       state.tickets.unshift({ nr, kjoper: fmtTlf(n), selger: state.selger, betalt: true });
     }
     toast(ant + " lodd betalt.");
+    registrerSalg({
+      type: "lodd",
+      tekst: fmtTlf(n) + " · " + ant + " pizzalodd #" + String(state.loddSolgt).padStart(3, "0"),
+      belop: ant * state.loddPris,
+      selger: state.selger
+    });
     kasse();
   }
   function sendPay(t) {
@@ -652,6 +706,12 @@
     };
     state.orders.unshift(o);
     state.vareSum += t;
+    registrerSalg({
+      type: "varer",
+      tekst: o.navn + " · " + vareLinje(o),
+      belop: t,
+      selger: state.selger
+    });
     state.phone = "";
     state.cart = { egg: 0, korn: 0, potet: 0 };
     toast("Vipps godkjent. Henting " + vindu + ".");
@@ -680,6 +740,11 @@
           </table>
         </article>
       </div>
+      <article class="card" style="margin-top:12px">
+        <h3>Salg i kveld</h3>
+        <p class="muted">${state.salg.filter(s => s.betalt).reduce((a, s) => a + s.belop, 0).toLocaleString("nb-NO")} kr betalt i lista under. Demo-tall + det du selger nå.</p>
+        ${salgListe(12)}
+      </article>
       <article class="card" style="margin-top:12px">
         <h3>Salg per spiller</h3>
         <table>
