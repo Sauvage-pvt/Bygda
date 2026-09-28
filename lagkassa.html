@@ -219,6 +219,7 @@
     _n: 2,
     loddPris: 50, loddMax: 200, loddSolgt: 90,
     selger: "Håkon",
+    spillere: ["Ola", "Håkon", "Emil", "Sander"],
     tickets: [
       { nr: "014", kjoper: "Kari, 977 12 334", selger: "Ola", betalt: true },
       { nr: "015", kjoper: "Bestefar", selger: "Håkon", betalt: true },
@@ -301,6 +302,33 @@
           <div class="${s.betalt ? "ok" : "wait"}">${s.betalt ? "Vipps" : "Venter"}</div>
         </div>
       </div>`).join("");
+  }
+  function selgerKnapper(tilbake) {
+    return `
+      <label class="muted">Hvem selger nå</label>
+      <div class="row" style="margin-top:6px">${state.spillere.map(n =>
+        `<button class="${state.selger === n ? "primary" : "ghost"}" onclick="velgSelger('${n}','${tilbake}')">${n}</button>`
+      ).join("")}</div>
+      <p class="muted" style="margin-top:8px">Ingen hefte i sekken. ${state.selger} er pålogget denne økta. Loddnummer tildeles etter Vipps og lander på profilen hans.</p>`;
+  }
+  function velgSelger(navn, tilbake) {
+    state.selger = navn;
+    toast("Denne økta selger " + navn);
+    go(tilbake);
+  }
+  function loddAv(navn) {
+    return state.tickets.filter(t => t.selger === navn).length;
+  }
+  function vareAv(navn) {
+    const list = state.orders.filter(o => o.selger === navn && o.betalt);
+    const egg = list.reduce((a, o) => a + o.egg, 0);
+    const korn = list.reduce((a, o) => a + o.korn, 0);
+    const potet = list.reduce((a, o) => a + o.potet, 0);
+    return [egg ? egg + " egg" : "", korn ? korn + " korn" : "", potet ? potet + " potet" : ""].filter(Boolean).join(" · ") || "—";
+  }
+  function venterAv(navn) {
+    return state.tickets.filter(t => t.selger === navn && !t.betalt).length
+      + state.orders.filter(o => o.selger === navn && !o.betalt).length;
   }
   function go(name) {
     document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("on", b.dataset.go === name));
@@ -421,13 +449,14 @@
         <article class="card good">
           <span class="pill">Slik det er her</span>
           <h3>Tre trykk</h3>
-          <p class="muted">Velg antall → tast nummer → naboen godkjenner Vipps. Loddnummer deles ut automatisk. Trekning med ett trykk.</p>
+          <p class="muted">Velg hvem som selger → tast nummer → naboen godkjenner Vipps. Loddnummer deles ut automatisk på den spilleren. Ingen hefte å dele ut på trening.</p>
           <p class="ok">Alt ligger på lagets Vipps #54921</p>
         </article>
       </div>
       <div class="split">
         <article class="card">
           <h3>Salg i døra / på pad</h3>
+          ${selgerKnapper("pizza")}
           <p class="muted">Premie: 3 gavekort på stor pizza. Lodd ${state.loddPris} kr. ${igjen} lodd igjen.</p>
           <label class="muted">Antall lodd nå</label>
           <div class="qty">
@@ -438,7 +467,6 @@
           <label class="muted">Kjøpers mobil</label>
           <input id="loddphone" inputmode="tel" placeholder="977 12 334" />
           <button class="clay grow" onclick="selgLodd()">Send Vipps-krav ${((state._n || 1) * state.loddPris)} kr</button>
-          <p class="muted" style="margin-top:8px">Selger denne økta: ${state.selger}. Loddnummer kommer opp når betalingen er inne.</p>
         </article>
         <div class="stack">
           <article class="card">
@@ -623,11 +651,12 @@
   function kasse() {
     const t = state.cart.egg * price.egg + state.cart.korn * price.korn + state.cart.potet * price.potet;
     document.getElementById("screen").innerHTML = `
-      <p class="kicker">Pad i døra · selger ${state.selger}</p>
+      <p class="kicker">Pad i døra · ${state.selger} selger</p>
       <h2>Kasse</h2>
       <div class="kasse-grid">
         <article class="card">
-          <div class="row" style="margin-top:0">
+          ${selgerKnapper("kasse")}
+          <div class="row">
             <button class="${state.mode !== "lodd" ? "primary" : "ghost"} grow" onclick="state.mode='varer'; kasse()">Varer</button>
             <button class="${state.mode === "lodd" ? "clay" : "ghost"} grow" onclick="state.mode='lodd'; kasse()">Pizzalodd</button>
           </div>
@@ -747,12 +776,13 @@
       </article>
       <article class="card" style="margin-top:12px">
         <h3>Salg per spiller</h3>
+        <p class="muted">Profilene er guttene på laget. De velger navnet sitt på telefonen før de går. Ingen loddbok å dele ut.</p>
         <table>
-          <tr><th>Spiller</th><th>Lodd</th><th>Varer</th><th>Vipps</th></tr>
-          <tr><td>Ola</td><td>22</td><td>6 egg</td><td class="ok">Ok</td></tr>
-          <tr><td>Håkon</td><td>18</td><td>3 korn</td><td class="ok">Ok</td></tr>
-          <tr><td>Emil</td><td>15</td><td>—</td><td class="ok">Ok</td></tr>
-          <tr><td>Sander</td><td>9</td><td>4 egg</td><td class="wait">1 venter</td></tr>
+          <tr><th>Spiller</th><th>Lodd i app</th><th>Varer</th><th>Vipps</th></tr>
+          ${state.spillere.map(n => {
+            const v = venterAv(n);
+            return `<tr><td>${n}${n === state.selger ? " · nå" : ""}</td><td>${loddAv(n)}</td><td>${vareAv(n)}</td><td class="${v ? "wait" : "ok"}">${v ? v + " venter" : "Ok"}</td></tr>`;
+          }).join("")}
         </table>
         <div class="row">
           <button class="primary grow" onclick="go('varer')">Åpne henteoppsett</button>
@@ -798,6 +828,14 @@
             <p class="muted">Salgslinjen blir stående som Venter. Den kommer ikke med i SMS til bonden. Den kommer ikke med i trekningen. Kasserer kan sende kravet på nytt — eller stryke det.</p>`)}
         </article>
         <article class="card">
+          ${open("lodd", "Hvordan deles pizzalodd ut?", `
+            <p class="muted">De deles ikke ut som hefter. Alle 200 lodd ligger i appen. Gutten (eller den voksne med pad) velger navnet sitt — Ola, Håkon, Emil eller Sander — før han går.</p>
+            <ol class="steps">
+              <li>Velg selgerprofil.</li>
+              <li>Selg. Vipps først.</li>
+              <li>Appen gir neste ledige loddnummer til den profilen.</li>
+            </ol>
+            <p class="muted">Håkon står som standard bare fordi noen må være valgt når demoen åpnes. Bytt navn øverst i loddboka eller kassa. Da lander neste salg på den gutten.</p>`)}
           ${open("bonde", "Hvordan vet bonden hva han skal levere?", `
             <p class="muted">Appen summerer bare betalte ordrer. Ett trykk sender én SMS: så mange eggbrett, kornband og potetsekker, levering 16:45 på klubbhuset.</p>
             <p class="muted">Derfor blir det ikke restlager. Det som ikke er betalt, blir ikke hentet fra gården.</p>`)}
